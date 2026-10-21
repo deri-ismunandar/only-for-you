@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Misi Rahasia: Operasi Bikin Senyum 100% 💖</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icons CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Nunito & Fredoka -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Nunito:wght@600;700;800&display=swap" rel="stylesheet">
+    <!-- Canvas Confetti CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- html2canvas CDN untuk Ekspor Kupon Kualitas Tinggi 2K -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            pink: '#FF6B8B',
+                            softPink: '#FFE5EC',
+                            peach: '#FFB3C1',
+                            purple: '#9B51E0',
+                            accent: '#FF85A1',
+                            yellow: '#FFD166'
+                        }
+                    },
+                    fontFamily: {
+                        display: ['Fredoka', 'sans-serif'],
+                        body: ['Nunito', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            touch-action: manipulation;
+            user-select: none;
+            -webkit-user-select: none;
+            background: linear-gradient(135deg, #FFE5EC 0%, #FFF0F3 50%, #E8E8FF 100%);
+        }
+        
+        .font-display {
+            font-family: 'Fredoka', sans-serif;
+        }
+
+        /* Custom Animated Pulse & Bounce */
+        @keyframes floatCute {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-8px) rotate(3deg); }
+        }
+        .animate-float {
+            animation: floatCute 3s ease-in-out infinite;
+        }
+
+        .btn-bounce:active {
+            transform: scale(0.95);
+        }
+
+        /* Canvas container shadow styling */
+        #gameCanvas {
+            border-radius: 1.5rem;
+            box-shadow: 0 15px 35px -5px rgba(255, 107, 139, 0.25), 0 8px 15px -6px rgba(0, 0, 0, 0.05);
+            background: linear-gradient(to bottom, #ffffff, #FFF5F7);
+        }
+
+        /* Scratch card styles */
+        .scratch-container {
+            position: relative;
+            width: 100%;
+            max-width: 340px;
+            height: 180px;
+            margin: 0 auto;
+            border-radius: 1rem;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(255, 107, 139, 0.2);
+        }
+
+        .scratch-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        /* Cute Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #FFE5EC;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #FF85A1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body class="min-h-screen text-slate-800 flex items-center justify-center p-3 md:p-6 overflow-x-hidden">
+
+    <div class="fixed inset-0 pointer-events-none overflow-hidden z-0 opacity-40">
+        <i class="fa-solid fa-heart text-brand-pink text-3xl absolute top-10 left-8 animate-float" style="animation-delay: 0s;"></i>
+        <i class="fa-solid fa-star text-brand-yellow text-2xl absolute top-1/4 right-10 animate-float" style="animation-delay: 1s;"></i>
+        <i class="fa-solid fa-cloud text-white text-5xl absolute bottom-20 left-12 animate-float" style="animation-delay: 1.5s;"></i>
+        <i class="fa-solid fa-sparkles text-brand-purple text-2xl absolute bottom-1/3 right-12 animate-float" style="animation-delay: 2s;"></i>
+    </div>
+
+    <main class="w-full max-w-md bg-white/90 backdrop-blur-md rounded-3xl p-5 md:p-7 border-4 border-white shadow-2xl relative z-10 transition-all duration-300">
+
+        <!-- SCREEN 1: ONBOARDING / QUESTIONNAIRE -->
+        <section id="screenOnboarding" class="block space-y-5">
+            <div class="text-center space-y-2">
+                <span class="inline-block px-3 py-1 bg-brand-softPink text-brand-pink rounded-full text-xs font-bold tracking-wide uppercase shadow-sm">
+                    ✨ Misi Khusus Untukmu ✨
+                </span>
+                <h1 class="text-2xl md:text-3xl font-display font-bold text-slate-800 leading-tight">
+                    Misi Rahasia: <span class="text-brand-pink">Uji Tingkat Kebahagiaan</span> 🔒✨
+                </h1>
+                <p class="text-xs md:text-sm text-slate-500">
+                    Ada pesan rahasia yang terkunci! Isi data singkat di bawah untuk membuka akses kejutannya 😉
+                </p>
+            </div>
+
+            <form id="userDataForm" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <i class="fa-solid fa-user-tag text-brand-pink mr-1"></i> Panggilan Kesayangan / Nama Kamu:
+                    </label>
+                    <input type="text" id="inputName" required placeholder="Contoh: Tuan Putri / [Nama Kamu]" 
+                           class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-brand-pink focus:outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <i class="fa-solid fa-utensils text-brand-pink mr-1"></i> Makanan Pemadam Kelaparan / Favorite:
+                    </label>
+                    <input type="text" id="inputFood" required placeholder="Contoh: Seblak / Ramen / Steak / Sushi" 
+                           class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-brand-pink focus:outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <i class="fa-solid fa-mug-hot text-brand-pink mr-1"></i> Minuman Penyelamat Mood:
+                    </label>
+                    <input type="text" id="inputDrink" required placeholder="Contoh: Boba Brown Sugar / Ice Matcha Latte / Es Teh" 
+                           class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-brand-pink focus:outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-700 mb-1">
+                        <i class="fa-solid fa-compass text-brand-pink mr-1"></i> Kegiatan Seru / Quality Time Impian:
+                    </label>
+                    <input type="text" id="inputPlace" required placeholder="Contoh: Nonton Bioskop / Thrift Shopping / Keliling Kota Pas Sore" 
+                           class="w-full px-4 py-2.5 rounded-xl border-2 border-slate-200 focus:border-brand-pink focus:outline-none transition text-sm bg-slate-50/50">
+                </div>
+
+                <button type="submit" class="w-full py-3.5 bg-gradient-to-r from-brand-pink to-brand-accent text-white font-display font-bold text-base rounded-2xl shadow-lg shadow-brand-pink/30 hover:opacity-95 transition transform btn-bounce flex items-center justify-center gap-2 mt-2">
+                    <span>Lanjut Ke Misi Game</span>
+                    <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </form>
+        </section>
+
+        <!-- SCREEN 2: INSTRUCTIONS -->
+        <section id="screenInstructions" class="hidden space-y-5 text-center">
+            <div class="space-y-2">
+                <span class="inline-block px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold tracking-wide uppercase shadow-sm">
+                    🎯 Panduan Misi Kebahagiaan
+                </span>
+                <h2 class="text-2xl font-display font-bold text-slate-800">
+                    Tangkap Kebahagiaan! ⚡💖
+                </h2>
+            </div>
+
+            <div class="bg-gradient-to-br from-brand-softPink/60 via-white to-pink-50 p-4 rounded-2xl border-2 border-brand-peach/50 space-y-3 text-left text-xs shadow-sm">
+                <!-- Navigation -->
+                <div class="flex items-center gap-3 bg-white/80 p-2.5 rounded-xl border border-pink-100 shadow-xs">
+                    <div class="w-9 h-9 rounded-lg bg-pink-100 text-brand-pink flex items-center justify-center text-lg font-bold shrink-0">
+                        🛒
+                    </div>
+                    <div class="leading-tight">
+                        <p class="font-bold text-slate-800">Navigasi Keranjang</p>
+                        <p class="text-[11px] text-slate-500">Geser mouse, sentuh layar, atau pencet panah kanan/kiri.</p>
+                    </div>
+                </div>
+
+                <!-- Target Items Grid -->
+                <div class="grid grid-cols-2 gap-2">
+                    <div class="bg-emerald-50/90 border border-emerald-200/80 p-2.5 rounded-xl space-y-1">
+                        <div class="flex items-center gap-1 text-emerald-700 font-bold text-[12px]">
+                            <i class="fa-solid fa-circle-plus text-[10px]"></i>
+                            <span>Target Manis</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-base py-0.5">
+                            <span class="bg-white px-1.5 py-0.5 rounded-md shadow-xs">❤️</span>
+                            <span class="bg-white px-1.5 py-0.5 rounded-md shadow-xs">🧋</span>
+                            <span class="bg-white px-1.5 py-0.5 rounded-md shadow-xs">⭐</span>
+                        </div>
+                        <p class="text-[10px] text-emerald-800 font-semibold">+5 s/d +10 Poin</p>
+                    </div>
+
+                    <div class="bg-rose-50/90 border border-rose-200/80 p-2.5 rounded-xl space-y-1">
+                        <div class="flex items-center gap-1 text-rose-700 font-bold text-[12px]">
+                            <i class="fa-solid fa-triangle-exclamation text-[10px]"></i>
+                            <span>Bahaya Beban!</span>
+                        </div>
+                        <div class="flex items-center gap-1 text-base py-0.5">
+                            <span class="bg-white px-1.5 py-0.5 rounded-md shadow-xs">🌩️</span>
+                            <span class="bg-white px-1.5 py-0.5 rounded-md shadow-xs">💣</span>
+                        </div>
+                        <p class="text-[10px] text-rose-800 font-semibold">-20 s/d -25 Poin!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-3 bg-amber-50 rounded-xl border border-amber-200/60 text-xs text-amber-800">
+                🎯 <strong>Target:</strong> Kumpulkan <strong>100 Poin</strong> untuk membuka kupon kejutan spesial!
+            </div>
+
+            <div class="space-y-2 pt-1">
+                <button id="btnStartGame" class="w-full py-3.5 bg-gradient-to-r from-brand-pink to-brand-accent text-white font-display font-bold text-base rounded-2xl shadow-lg shadow-brand-pink/30 hover:opacity-95 transition transform btn-bounce flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-play"></i>
+                    <span>Mulai Gamenya Sekarang!</span>
+                </button>
+
+                <button id="btnBackToData" class="w-full py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-xs rounded-xl transition flex items-center justify-center gap-1.5">
+                    <i class="fa-solid fa-arrow-left"></i>
+                    <span>Kembali & Edit Data Personal</span>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 3: GAME CANVAS -->
+        <section id="screenGame" class="hidden space-y-3 text-center">
+            <!-- Game HUD Header -->
+            <div class="flex items-center justify-between bg-slate-50 px-4 py-2.5 rounded-2xl border border-slate-100">
+                <div class="text-left">
+                    <p class="text-[10px] font-bold uppercase text-slate-400">Pemain</p>
+                    <p id="hudPlayerName" class="font-display font-bold text-brand-pink text-sm truncate max-w-[100px]">Player</p>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-[10px] font-bold uppercase text-slate-400">Skor Kamu</p>
+                    <p id="hudScore" class="font-display font-bold text-xl text-slate-800">0 / 100</p>
+                </div>
+
+                <div class="text-right">
+                    <p class="text-[10px] font-bold uppercase text-slate-400">Waktu</p>
+                    <p id="hudTimer" class="font-display font-bold text-sm text-slate-700">45s</p>
+                </div>
+            </div>
+
+            <!-- Canvas Container -->
+            <div class="relative w-full flex justify-center items-center">
+                <canvas id="gameCanvas" width="320" height="380" class="w-full max-w-[320px] touch-none"></canvas>
+                
+                <!-- Floating Combo Text overlay -->
+                <div id="comboOverlay" class="absolute pointer-events-none opacity-0 transition-all duration-300 font-display font-bold text-brand-pink text-lg bg-white/90 px-3 py-1 rounded-full shadow-md">
+                    +10 Super Love!
+                </div>
+            </div>
+
+            <!-- On-Screen Controls for Mobile Touch -->
+            <div class="grid grid-cols-2 gap-3 pt-1">
+                <button id="btnLeft" class="py-3 bg-slate-100 hover:bg-slate-200 active:bg-brand-softPink text-slate-700 font-bold rounded-2xl text-lg flex items-center justify-center gap-1 shadow-sm transition btn-bounce">
+                    <i class="fa-solid fa-arrow-left text-brand-pink"></i>
+                    <span class="text-xs">Kiri</span>
+                </button>
+                <button id="btnRight" class="py-3 bg-slate-100 hover:bg-slate-200 active:bg-brand-softPink text-slate-700 font-bold rounded-2xl text-lg flex items-center justify-center gap-1 shadow-sm transition btn-bounce">
+                    <span class="text-xs">Kanan</span>
+                    <i class="fa-solid fa-arrow-right text-brand-pink"></i>
+                </button>
+            </div>
+        </section>
+
+        <!-- SCREEN 4: VICTORY & SURPRISE REVEAL -->
+        <section id="screenSurprise" class="hidden space-y-5 text-center">
+            <div class="space-y-1">
+                <span class="inline-block px-3 py-1 bg-emerald-100 text-emerald-600 rounded-full text-xs font-bold">
+                    🎉 YAY! MISI SUKSES! 🎉
+                </span>
+                <h2 class="text-2xl font-display font-bold text-slate-800">
+                    Selamat, <span id="surprisePlayerName" class="text-brand-pink">Kamu</span> Pemenangnya!
+                </h2>
+                <p class="text-xs text-slate-500">
+                    Kamu berhasil mengalahkan semua beban hidup & menangkap semua cinta!
+                </p>
+            </div>
+
+            <!-- Interactive Scratch Card Box -->
+            <div class="space-y-2">
+                <p class="text-xs font-bold text-brand-purple flex items-center justify-center gap-1">
+                    <i class="fa-solid fa-hand-sparkles"></i>
+                    <span>Gosok Kartu Di Bawah Ini Untuk Buka Kejutannya:</span>
+                </p>
+
+                <!-- Container khusus kupon yang diekspor ke gambar 2K -->
+                <div id="couponCardBox" class="p-2 bg-gradient-to-b from-pink-100 to-purple-100 rounded-3xl shadow-inner inline-block w-full">
+                    <div class="scratch-container rounded-2xl">
+                        <!-- Revealed content underneath -->
+                        <div class="absolute inset-0 bg-gradient-to-br from-amber-50 to-pink-50 p-4 flex flex-col items-center justify-center text-center space-y-1 border-2 border-amber-200 rounded-2xl">
+                            <span class="text-xs font-bold text-amber-600 tracking-wider uppercase">🎟️ KUPON KEJUTAN SPESIAL</span>
+                            <h3 id="scratchRewardTitle" class="font-display font-bold text-slate-800 text-base leading-tight">
+                                Traktiran [Makanan] & [Kegiatan Impian]!
+                            </h3>
+                            <p id="scratchRewardSub" class="text-[11px] text-pink-600 font-bold">
+                                *(Tapi minumannya kamu yang traktir aku ya! 😜❤️)*
+                            </p>
+                            <div class="mt-1 px-3 py-1 bg-brand-pink text-white text-[10px] font-bold rounded-full shadow-sm">
+                                KODE UNIK: <span id="rewardCode">LOVE-100-PERCENT</span>
+                            </div>
+                        </div>
+
+                        <!-- Top canvas layer to be scratched away -->
+                        <canvas id="scratchCanvas" class="scratch-canvas"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Certificate Card -->
+            <div id="certificateCardBox" class="bg-gradient-to-b from-white via-pink-50 to-[#FFE5EC] p-5 rounded-3xl border-2 border-[#FFB3C1] shadow-md text-left space-y-3 text-xs relative overflow-hidden text-slate-800">
+                <div class="absolute -right-3 -bottom-3 text-pink-200/80 text-7xl font-bold pointer-events-none select-none">
+                    ❤️
+                </div>
+                
+                <div class="flex items-center justify-between border-b border-pink-200 pb-2">
+                    <span class="font-display font-bold text-brand-pink text-sm flex items-center gap-1.5">
+                        <i class="fa-solid fa-ribbon text-brand-pink"></i>
+                        <span>SERTIFIKAT OFFICIAL</span>
+                    </span>
+                    <span class="text-[10px] text-pink-500 font-bold bg-white px-2 py-0.5 rounded-full border border-pink-200 shadow-xs">No. 001/HATI/2026</span>
+                </div>
+
+                <p class="text-slate-700 leading-relaxed pt-0.5">
+                    Dengan ini dinyatakan bahwa <strong id="certName" class="text-brand-pink font-extrabold text-sm">Kamu</strong> resmi dinobatkan sebagai <strong>Pemenang Hati Utama</strong>.
+                </p>
+
+                <ul class="space-y-1.5 text-slate-700 pl-1 font-semibold">
+                    <li class="flex items-center gap-2"><span class="text-base">🌸</span> <span><strong>Menu Traktiran:</strong> <span id="certFood" class="text-slate-900 font-extrabold">Seblak</span></span></li>
+                    <li class="flex items-center gap-2"><span class="text-base">🧋</span> <span><strong>Minuman Penyelamat:</strong> <span id="certDrink" class="text-slate-900 font-extrabold">Boba</span></span></li>
+                    <li class="flex items-center gap-2"><span class="text-base">✨</span> <span><strong>Kegiatan Impian:</strong> <span id="certPlace" class="text-slate-900 font-extrabold">Nonton Bioskop</span></span></li>
+                    <li class="flex items-center gap-2"><span class="text-base">💌</span> <span><strong>Catatan Khusus:</strong> Pokoknya kamu gak boleh cemberut lagi ya! ✨</span></li>
+                </ul>
+
+                <!-- Kolom Cap Sidik Jari Interactive -->
+                <div class="mt-3 pt-2.5 border-t border-pink-200 flex items-end justify-between">
+                    <div>
+                        <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Status Misi</p>
+                        <p class="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                            <i class="fa-solid fa-circle-check"></i> 100% Sah & Legal
+                        </p>
+                    </div>
+
+                    <div class="text-center">
+                        <div id="fingerprintTarget" class="w-14 h-16 border-2 border-dashed border-pink-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-pink-100/50 active:scale-95 transition relative overflow-hidden bg-white shadow-xs group">
+                            <i id="fingerprintIcon" class="fa-solid fa-fingerprint text-slate-300 text-2xl transition-all duration-300 group-hover:text-brand-pink"></i>
+                            <span id="fingerprintText" class="text-[8px] text-slate-400 font-bold mt-0.5">Cap Di Sini</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Petunjuk Tempel Sidik Jari (Otomatis Hilang Saat Download) -->
+            <p id="fingerprintNote" class="text-[11px] text-brand-pink font-bold animate-pulse text-center">
+                ✨ Tempelkan jarimu pada kotak di atas untuk cap sidik jari! ✨
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="space-y-2 pt-1">
+                <button id="btnDownloadCoupon" 
+                   class="w-full py-3.5 bg-gradient-to-r from-emerald-500 to-teal-500 hover:opacity-95 text-white font-display font-bold text-sm rounded-2xl shadow-lg shadow-emerald-500/20 transition transform btn-bounce flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-download text-lg"></i>
+                    <span>Download Kupon Hadiah 📸</span>
+                </button>
+
+                <button id="btnDownloadCert" 
+                   class="w-full py-3.5 bg-gradient-to-r from-purple-500 to-pink-500 hover:opacity-95 text-white font-display font-bold text-sm rounded-2xl shadow-lg shadow-purple-500/20 transition transform btn-bounce flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-certificate text-lg"></i>
+                    <span>Download Sertifikat Official 📜</span>
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        /* WEB AUDIO API SOUND GENERATOR */
+        class CuteSoundFX {
+            constructor() {
+                this.ctx = null;
+            }
+
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+
+            playPickup() {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(880, this.ctx.currentTime + 0.15);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.15);
+                } catch(e) {}
+            }
+
+            playHurt() {
+                try {
+                    this.init();
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(220, this.ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(110, this.ctx.currentTime + 0.2);
+                    gain.gain.setValueAtTime(0.15, this.ctx.currentTime);
+                    gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + 0.2);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start();
+                    osc.stop(this.ctx.currentTime + 0.2);
+                } catch(e) {}
+            }
+
+            playWinFanfare() {
+                try {
+                    this.init();
+                    const notes = [523.25, 659.25, 783.99, 1046.50];
+                    notes.forEach((freq, idx) => {
+                        const osc = this.ctx.createOscillator();
+                        const gain = this.ctx.createGain();
+                        osc.type = 'triangle';
+                        osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.1);
+                        gain.gain.setValueAtTime(0.2, this.ctx.currentTime + idx * 0.1);
+                        gain.gain.linearRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.1 + 0.25);
+                        osc.connect(gain);
+                        gain.connect(this.ctx.destination);
+                        osc.start(this.ctx.currentTime + idx * 0.1);
+                        osc.stop(this.ctx.currentTime + idx * 0.1 + 0.25);
+                    });
+                } catch(e) {}
+            }
+        }
+
+        const soundFX = new CuteSoundFX();
+
+        const userData = {
+            name: '',
+            food: '',
+            drink: '',
+            place: ''
+        };
+
+        // Canvas & Context Definition
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Player state object
+        const player = {
+            x: 135,
+            y: 330,
+            width: 50,
+            height: 40,
+            speed: 6,
+            dx: 0
+        };
+
+        // Item types & scoring
+        const itemTypes = [
+            { emoji: '❤️', points: 5, type: 'good', label: 'Love' },
+            { emoji: '🧋', points: 5, type: 'good', label: 'Boba' },
+            { emoji: '🍰', points: 5, type: 'good', label: 'Cake' },
+            { emoji: '⭐', points: 10, type: 'good', label: 'Star' },
+            { emoji: '🌩️', points: -20, type: 'bad', label: 'Petir' },
+            { emoji: '💣', points: -25, type: 'bad', label: 'Bom' }
+        ];
+
+        let score = 0;
+        let timeLeft = 45;
+        let fallingItems = [];
+        let isGameRunning = false;
+        let animationFrameId = null;
+        let gameTimerInterval = null;
+
+        // DOM Screens
+        const screenOnboarding = document.getElementById('screenOnboarding');
+        const screenInstructions = document.getElementById('screenInstructions');
+        const screenGame = document.getElementById('screenGame');
+        const screenSurprise = document.getElementById('screenSurprise');
+
+        // Form Input elements
+        const userDataForm = document.getElementById('userDataForm');
+        const inputName = document.getElementById('inputName');
+        const inputFood = document.getElementById('inputFood');
+        const inputDrink = document.getElementById('inputDrink');
+        const inputPlace = document.getElementById('inputPlace');
+
+        // Game HUD Elements
+        const hudPlayerName = document.getElementById('hudPlayerName');
+        const hudScore = document.getElementById('hudScore');
+        const hudTimer = document.getElementById('hudTimer');
+        const comboOverlay = document.getElementById('comboOverlay');
+
+        // Buttons
+        const btnStartGame = document.getElementById('btnStartGame');
+        const btnBackToData = document.getElementById('btnBackToData');
+        const btnLeft = document.getElementById('btnLeft');
+        const btnRight = document.getElementById('btnRight');
+        const btnDownloadCoupon = document.getElementById('btnDownloadCoupon');
+        const btnDownloadCert = document.getElementById('btnDownloadCert');
+
+        // Fingerprint elements
+        const fingerprintTarget = document.getElementById('fingerprintTarget');
+        const fingerprintIcon = document.getElementById('fingerprintIcon');
+        const fingerprintText = document.getElementById('fingerprintText');
+        const fingerprintNote = document.getElementById('fingerprintNote');
+
+        // Interactive Fingerprint Action
+        if (fingerprintTarget) {
+            fingerprintTarget.addEventListener('click', stampFingerprint);
+            fingerprintTarget.addEventListener('touchstart', (e) => {
+                e.preventDefault();
+                stampFingerprint();
+            });
+        }
+
+        function stampFingerprint() {
+            soundFX.playPickup();
+            fingerprintIcon.className = 'fa-solid fa-fingerprint text-brand-pink text-3xl scale-110 transition-all duration-300 drop-shadow-sm';
+            fingerprintText.textContent = 'SAH ✨';
+            fingerprintText.className = 'text-[8px] text-brand-pink font-extrabold mt-0.5';
+            fingerprintTarget.classList.remove('border-dashed', 'border-pink-300');
+            fingerprintTarget.classList.add('border-solid', 'border-brand-pink', 'bg-pink-50');
+
+            fingerprintNote.innerHTML = '🎉 Sidik jari terekam & tersimpan resmi! 🎉';
+            fingerprintNote.classList.remove('animate-pulse');
+            fingerprintNote.classList.add('text-emerald-600');
+        }
+
+        // Handle Form Submission
+        userDataForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            userData.name = inputName.value.trim() || 'Kamu';
+            userData.food = inputFood.value.trim() || 'Makanan Favorit';
+            userData.drink = inputDrink.value.trim() || 'Minuman Kesukaan';
+            userData.place = inputPlace.value.trim() || 'Jalan-jalan';
+
+            // Populate preview texts in certificate & HUD
+            hudPlayerName.textContent = userData.name;
+            document.getElementById('certName').textContent = userData.name;
+            document.getElementById('certFood').textContent = userData.food;
+            document.getElementById('certDrink').textContent = userData.drink;
+            document.getElementById('certPlace').textContent = userData.place;
+            document.getElementById('surprisePlayerName').textContent = userData.name;
+
+            // Update scratch card reward text
+            document.getElementById('scratchRewardTitle').textContent = `Traktiran ${userData.food} & ${userData.place}!`;
+            document.getElementById('scratchRewardSub').textContent = `*(Tapi minumannya kamu yang traktir aku ya! 😜❤️)*`;
+
+            // Switch to instructions screen
+            screenOnboarding.classList.add('hidden');
+            screenInstructions.classList.remove('hidden');
+        });
+
+        btnStartGame.addEventListener('click', () => {
+            screenInstructions.classList.add('hidden');
+            screenGame.classList.remove('hidden');
+            startMiniGame();
+        });
+
+        // Tombol Kembali ke pengisian data personal
+        btnBackToData.addEventListener('click', () => {
+            screenInstructions.classList.add('hidden');
+            screenOnboarding.classList.remove('hidden');
+        });
+
+        // Download Kupon Kualitas 2K (2560px Output Resolution)
+        btnDownloadCoupon.addEventListener('click', async () => {
+            const couponBox = document.getElementById('couponCardBox');
+            if (!couponBox) return;
+
+            const originalBtnText = btnDownloadCoupon.innerHTML;
+            btnDownloadCoupon.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengekspor Kupon...</span>`;
+            btnDownloadCoupon.disabled = true;
+
+            try {
+                const boxWidth = couponBox.offsetWidth || 340;
+                const scaleFactor = Math.max(4, Math.ceil(2560 / boxWidth));
+
+                const renderedCanvas = await html2canvas(couponBox, {
+                    scale: scaleFactor,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: null,
+                    logging: false
+                });
+
+                const imageURI = renderedCanvas.toDataURL('image/png', 1.0);
+                const downloadLink = document.createElement('a');
+                const cleanName = (userData.name || 'Pemenang').replace(/[^a-zA-Z0-9]/g, '_');
+                downloadLink.download = `Kupon_Kejutan_${cleanName}.png`;
+                downloadLink.href = imageURI;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            } catch (err) {
+                console.error('Gagal mendownload kupon:', err);
+            } finally {
+                btnDownloadCoupon.innerHTML = originalBtnText;
+                btnDownloadCoupon.disabled = false;
+            }
+        });
+
+        // Download Sertifikat Official Kualitas 2K (2560px Output Resolution)
+        btnDownloadCert.addEventListener('click', async () => {
+            const certBox = document.getElementById('certificateCardBox');
+            if (!certBox) return;
+
+            const originalBtnText = btnDownloadCert.innerHTML;
+            btnDownloadCert.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Mengekspor Sertifikat...</span>`;
+            btnDownloadCert.disabled = true;
+
+            // Sembunyikan pesan petunjuk sidik jari saat proses screenshot/download
+            if (fingerprintNote) fingerprintNote.style.visibility = 'hidden';
+
+            try {
+                const boxWidth = certBox.offsetWidth || 340;
+                const scaleFactor = Math.max(4, Math.ceil(2560 / boxWidth));
+
+                const renderedCanvas = await html2canvas(certBox, {
+                    scale: scaleFactor,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false
+                });
+
+                const imageURI = renderedCanvas.toDataURL('image/png', 1.0);
+                const downloadLink = document.createElement('a');
+                const cleanName = (userData.name || 'Pemenang').replace(/[^a-zA-Z0-9]/g, '_');
+                downloadLink.download = `Sertifikat_Official_${cleanName}.png`;
+                downloadLink.href = imageURI;
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+            } catch (err) {
+                console.error('Gagal mendownload sertifikat:', err);
+            } finally {
+                btnDownloadCert.innerHTML = originalBtnText;
+                btnDownloadCert.disabled = false;
+                if (fingerprintNote) fingerprintNote.style.visibility = 'visible';
+            }
+        });
+
+        function startMiniGame() {
+            score = 0;
+            timeLeft = 45;
+            fallingItems = [];
+            isGameRunning = true;
+            
+            // Recalculate player position to center bottom
+            player.x = canvas.width / 2 - player.width / 2;
+            player.y = canvas.height - player.height - 10;
+
+            updateHUD();
+
+            // Clear previous intervals/animations
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            if (gameTimerInterval) clearInterval(gameTimerInterval);
+
+            // Start Game Timer
+            gameTimerInterval = setInterval(() => {
+                if (!isGameRunning) return;
+                timeLeft--;
+                updateHUD();
+
+                if (timeLeft <= 0) {
+                    endGame(score >= 100);
+                }
+            }, 1000);
+
+            // Keyboard Controls
+            window.addEventListener('keydown', handleKeyDown);
+            window.addEventListener('keyup', handleKeyUp);
+
+            // Touch / Mouse controls on Canvas
+            canvas.addEventListener('touchmove', handleTouchMove, { passive: false });
+            canvas.addEventListener('mousemove', handleMouseMove);
+
+            // Button controls
+            btnLeft.addEventListener('mousedown', () => player.dx = -player.speed);
+            btnLeft.addEventListener('mouseup', () => player.dx = 0);
+            btnLeft.addEventListener('touchstart', (e) => { e.preventDefault(); player.dx = -player.speed; });
+            btnLeft.addEventListener('touchend', () => player.dx = 0);
+
+            btnRight.addEventListener('mousedown', () => player.dx = player.speed);
+            btnRight.addEventListener('mouseup', () => player.dx = 0);
+            btnRight.addEventListener('touchstart', (e) => { e.preventDefault(); player.dx = player.speed; });
+            btnRight.addEventListener('touchend', () => player.dx = 0);
+
+            gameLoop();
+        }
+
+        function handleKeyDown(e) {
+            if (e.key === 'ArrowLeft' || e.key === 'a') player.dx = -player.speed;
+            if (e.key === 'ArrowRight' || e.key === 'd') player.dx = player.speed;
+        }
+
+        function handleKeyUp(e) {
+            if (['ArrowLeft', 'ArrowRight', 'a', 'd'].includes(e.key)) player.dx = 0;
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            const rect = canvas.getBoundingClientRect();
+            const touchX = e.touches[0].clientX - rect.left;
+            player.x = touchX - player.width / 2;
+        }
+
+        function handleMouseMove(e) {
+            const rect = canvas.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            player.x = mouseX - player.width / 2;
+        }
+
+        function updateHUD() {
+            hudScore.textContent = `${score} / 100`;
+            hudTimer.textContent = `${timeLeft}s`;
+        }
+
+        function showComboText(text, x, y, isPositive) {
+            comboOverlay.textContent = text;
+            comboOverlay.style.left = `${Math.min(Math.max(x, 20), 200)}px`;
+            comboOverlay.style.top = `${y}px`;
+            comboOverlay.className = `absolute pointer-events-none transition-all duration-300 font-display font-bold text-sm px-3 py-1 rounded-full shadow-md ${
+                isPositive ? 'bg-emerald-500 text-white' : 'bg-rose-500 text-white'
+            }`;
+            comboOverlay.style.opacity = '1';
+
+            setTimeout(() => {
+                comboOverlay.style.opacity = '0';
+            }, 600);
+        }
+
+        function spawnFallingItem() {
+            if (Math.random() < 0.065) {
+                const randomItem = itemTypes[Math.floor(Math.random() * itemTypes.length)];
+                fallingItems.push({
+                    x: Math.random() * (canvas.width - 30),
+                    y: -30,
+                    size: 26,
+                    speed: 2.5 + Math.random() * 3.2,
+                    emoji: randomItem.emoji,
+                    points: randomItem.points,
+                    type: randomItem.type,
+                    label: randomItem.label
+                });
+            }
+        }
+
+        function gameLoop() {
+            if (!isGameRunning) return;
+
+            // Clear Canvas
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Move Player
+            player.x += player.dx;
+            if (player.x < 0) player.x = 0;
+            if (player.x + player.width > canvas.width) player.x = canvas.width - player.width;
+
+            // Draw Player Basket (Cute Cup/Basket with emoji)
+            ctx.font = '32px sans-serif';
+            ctx.fillText('🛍️', player.x + 8, player.y + 32);
+
+            // Spawn & Draw Items
+            spawnFallingItem();
+
+            for (let i = fallingItems.length - 1; i >= 0; i--) {
+                const item = fallingItems[i];
+                item.y += item.speed;
+
+                // Draw Emoji item
+                ctx.font = '24px sans-serif';
+                ctx.fillText(item.emoji, item.x, item.y);
+
+                // Check Collision with Player
+                if (
+                    item.y + item.size >= player.y &&
+                    item.y <= player.y + player.height &&
+                    item.x + item.size >= player.x &&
+                    item.x <= player.x + player.width
+                ) {
+                    score += item.points;
+                    if (score < 0) score = 0;
+                    updateHUD();
+
+                    if (item.type === 'good') {
+                        soundFX.playPickup();
+                        showComboText(`+${item.points} ${item.label}!`, item.x, item.y, true);
+                    } else {
+                        soundFX.playHurt();
+                        showComboText(`${item.points} Ops!`, item.x, item.y, false);
+                    }
+
+                    fallingItems.splice(i, 1);
+
+                    if (score >= 100) {
+                        endGame(true);
+                        return;
+                    }
+                    continue;
+                }
+
+                if (item.y > canvas.height + 20) {
+                    fallingItems.splice(i, 1);
+                }
+            }
+
+            animationFrameId = requestAnimationFrame(gameLoop);
+        }
+
+        function endGame(isWin) {
+            isGameRunning = false;
+            clearInterval(gameTimerInterval);
+            cancelAnimationFrame(animationFrameId);
+
+            if (isWin || score >= 80) {
+                soundFX.playWinFanfare();
+                triggerConfetti();
+                setupScratchCard();
+
+                screenGame.classList.add('hidden');
+                screenSurprise.classList.remove('hidden');
+            } else {
+                score = 100;
+                updateHUD();
+                setTimeout(() => {
+                    endGame(true);
+                }, 300);
+            }
+        }
+
+        function triggerConfetti() {
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 80,
+                    spread: 70,
+                    origin: { y: 0.6 }
+                });
+            }
+        }
+
+        function setupScratchCard() {
+            const scratchCanvas = document.getElementById('scratchCanvas');
+            const scratchCtx = scratchCanvas.getContext('2d');
+            const container = scratchCanvas.parentElement;
+
+            scratchCanvas.width = container.offsetWidth || 340;
+            scratchCanvas.height = container.offsetHeight || 180;
+
+            const gradient = scratchCtx.createLinearGradient(0, 0, scratchCanvas.width, scratchCanvas.height);
+            gradient.addColorStop(0, '#FFB3C1');
+            gradient.addColorStop(0.5, '#FF85A1');
+            gradient.addColorStop(1, '#FF6B8B');
+            
+            scratchCtx.fillStyle = gradient;
+            scratchCtx.fillRect(0, 0, scratchCanvas.width, scratchCanvas.height);
+
+            scratchCtx.font = 'bold 16px Nunito, sans-serif';
+            scratchCtx.fillStyle = '#FFFFFF';
+            scratchCtx.textAlign = 'center';
+            scratchCtx.fillText('✨ GOSOK DI SINI DENGAN JARI ✨', scratchCanvas.width / 2, scratchCanvas.height / 2 + 5);
+
+            let isScratching = false;
+
+            function scratch(e) {
+                if (!isScratching) return;
+                const rect = scratchCanvas.getBoundingClientRect();
+                const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+                const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+
+                const x = clientX - rect.left;
+                const y = clientY - rect.top;
+
+                scratchCtx.globalCompositeOperation = 'destination-out';
+                scratchCtx.beginPath();
+                scratchCtx.arc(x, y, 22, 0, Math.PI * 2);
+                scratchCtx.fill();
+            }
+
+            scratchCanvas.addEventListener('mousedown', (e) => { isScratching = true; scratch(e); });
+            scratchCanvas.addEventListener('mouseup', () => isScratching = false);
+            scratchCanvas.addEventListener('mousemove', scratch);
+
+            scratchCanvas.addEventListener('touchstart', (e) => { isScratching = true; scratch(e); }, { passive: true });
+            scratchCanvas.addEventListener('touchend', () => isScratching = false);
+            scratchCanvas.addEventListener('touchmove', scratch, { passive: true });
+        }
+    </script>
+</body>
+</html>
